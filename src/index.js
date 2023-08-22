@@ -51,10 +51,6 @@ async function onSubmitSearchForm(e) {
     searchQuery = e.currentTarget.searchQuery.value.trim();
     pageNumber = 1;
   
-    // if (searchQuery === '') {
-    //   return;
-    // }
-  
     if (!searchQuery) {
       message('Please write correct data!');
       return;
