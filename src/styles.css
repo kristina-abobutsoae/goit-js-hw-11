@@ -21,7 +21,7 @@ body {
 .search-form input[type='text'] {
   padding: 10px;
   font-size: 16px;
-  width: 70%;
+  width: 50%;
   border: 2px solid #ccc;
   border-radius: 5px;
 }
