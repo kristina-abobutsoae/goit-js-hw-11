@@ -56,17 +56,11 @@ async function onSubmitSearchForm(e) {
   } else {
     renderImageList(response.hits);
     gallerySimpleLightbox.refresh();
-    const observer = new IntersectionObserver((entries, observer) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting && !isLoading) {
-          loadMoreImages();
-        }
-      });
-    }, {
-      root: document.querySelector('.gallery'),
-      threshold: 0.9
+    document.addEventListener('scroll', () => {
+      if (gallery.scrollHeight - gallery.scrollTop <= gallery.clientHeight && !isLoading) {
+        loadMoreImages();
+      }
     });
-    observer.observe(document.querySelector('.gallery'));
   }
 }
 
