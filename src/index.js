@@ -50,30 +50,25 @@ async function onSubmitSearchForm(e) {
   }
 
   const response = await fetchImages(searchQuery, pageNumber);
-  currentHits = response.hits.length;
 
   if (response.totalHits === 0) {
     Notiflix.Notify.failure('Sorry, there are no images matching your search query. Please try again.');
-    return;
-  }
-
-  if (response.totalHits > 0) {
-    Notiflix.Notify.success(`Hooray! We found ${response.totalHits} images.`);
+  } else {
     renderImageList(response.hits);
     gallerySimpleLightbox.refresh();
+    const observer = new IntersectionObserver((entries, observer) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting && !isLoading) {
+          loadMoreImages();
+        }
+      });
+    }, {
+      root: document.querySelector('.gallery'),
+      threshold: 0.9
+    });
+    observer.observe(document.querySelector('.gallery'));
   }
 }
-
-const observer = new IntersectionObserver((entries, observer) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting && !isLoading) {
-      loadMoreImages();
-    }
-  });
-}, {
-  root: document.body,
-  threshold: 0.9
-});
 
 function loadMoreImages() {
   if (!isLoading) {
@@ -81,12 +76,6 @@ function loadMoreImages() {
     pageNumber += 1;
     fetchImages(searchQuery, pageNumber)
       .then(response => {
-        if (response.totalHits <= currentHits) {
-          // We've reached the last page
-          isLoading = false;
-          return;
-        }
-
         renderImageList(response.hits);
         gallerySimpleLightbox.refresh();
         currentHits += response.hits.length;
