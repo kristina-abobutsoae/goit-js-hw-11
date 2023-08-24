@@ -11,6 +11,7 @@ let pageNumber = 1;
 let currentHits = 0;
 let searchQuery = '';
 let isLoading = false;
+let isLastPage = false;
 
 function renderImageList(images) {
   const markup = images
@@ -34,6 +35,7 @@ function renderImageList(images) {
     </div>`;
     })
     .join('');
+
   gallery.innerHTML = markup;
 }
 
@@ -56,11 +58,18 @@ async function onSubmitSearchForm(e) {
   } else {
     renderImageList(response.hits);
     gallerySimpleLightbox.refresh();
-    document.addEventListener('scroll', () => {
-      if (gallery.scrollHeight - gallery.scrollTop <= gallery.clientHeight && !isLoading) {
-        loadMoreImages();
-      }
+
+    const observer = new IntersectionObserver((entries, observer) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting && !isLoading) {
+          loadMoreImages();
+        }
+      });
+    }, {
+      root: document.querySelector('.gallery'),
+      threshold: 0.9
     });
+    observer.observe(gallery);
   }
 }
 
@@ -68,19 +77,22 @@ function loadMoreImages() {
   if (!isLoading) {
     isLoading = true;
     const nextPageNumber = Math.min(currentHits + 10, response.totalHits);
-    fetchImages(searchQuery, nextPageNumber)
-      .then(response => {
-        currentHits += response.hits.length;
-        if (currentHits < response.totalHits) {
-          renderImageList(response.hits);
-        } else {
-          gallery.classList.add('end-of-results');
-        }
-        isLoading = false;
-      })
-      .catch(error => {
-        console.error(error);
-        isLoading = false;
-      });
+    if (nextPageNumber > pageNumber) {
+      pageNumber = nextPageNumber;
+      fetchImages(searchQuery, pageNumber)
+        .then(response => {
+          currentHits += response.hits.length;
+          if (currentHits < response.totalHits) {
+            renderImageList(response.hits);
+          } else {
+            isLastPage = true;
+          }
+          isLoading = false;
+        })
+        .catch(error => {
+          console.error(error);
+          isLoading = false;
+        });
+    }
   }
 }
