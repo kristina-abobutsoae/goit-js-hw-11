@@ -1,6 +1,7 @@
 import Notiflix from 'notiflix';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
+import fetchImages from './pixaby-api';
 
 const searchForm = document.querySelector('#search-form');
 const gallery = document.querySelector('.gallery');
@@ -10,7 +11,7 @@ let pageNumber = 1;
 let currentHits = 0;
 let searchQuery = '';
 let isLoading = false;
-let isLastPage = false; 
+let isLastPage = false;
 
 function renderImageList(images) {
   const fragment = document.createDocumentFragment();
@@ -78,7 +79,7 @@ function loadMoreImages(entries) {
     fetchImages(searchQuery, pageNumber)
       .then((response) => {
         if (response.hits.length === 0) {
-          isLastPage = true; 
+          isLastPage = true;
         } else {
           renderImageList(response.hits);
           gallerySimpleLightbox.refresh();
