@@ -73,12 +73,15 @@ async function onSubmitSearchForm(e) {
 function loadMoreImages() {
   if (!isLoading) {
     isLoading = true;
-    pageNumber += 1;
-    fetchImages(searchQuery, pageNumber)
+    const nextPageNumber = Math.min(currentHits + 10, response.totalHits);
+    fetchImages(searchQuery, nextPageNumber)
       .then(response => {
-        renderImageList(response.hits);
-        gallerySimpleLightbox.refresh();
         currentHits += response.hits.length;
+        if (currentHits < response.totalHits) {
+          renderImageList(response.hits);
+        } else {
+          gallery.classList.add('end-of-results');
+        }
         isLoading = false;
       })
       .catch(error => {
