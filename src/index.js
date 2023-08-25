@@ -77,7 +77,7 @@ function loadMoreImages() {
   if (!isLoading) {
     isLoading = true;
     const nextPageNumber = Math.min(currentHits + 10, response.totalHits);
-    if (nextPageNumber > pageNumber) {
+    if (nextPageNumber > pageNumber && currentHits < response.totalHits) {
       pageNumber = nextPageNumber;
       fetchImages(searchQuery, pageNumber)
         .then(response => {
