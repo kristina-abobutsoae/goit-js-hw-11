@@ -81,3 +81,21 @@ body {
     max-width: 100%;
   }
 }
+
+.load-more {
+  display: flex;
+  margin: 20px auto 20px;
+  text-align: center;
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: yellow;
+  color: black;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.load-more:hover {
+  background-color: #0056b3;
+}
